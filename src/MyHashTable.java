@@ -1,123 +1,101 @@
-import java.util.LinkedList;
+public class MyHashTable<K, V> {
+    private class HashNode {
+        private K key;
+        private V value;
+        private HashNode next;
 
-class MyHashTable {
-    private int size;
-    private LinkedList<Entry>[] table;
-
-    public MyHashTable(int size) {
-        this.size = size;
-        table = new LinkedList[size];
-        for (int i = 0; i < size; i++) {
-            table[i] = new LinkedList<>();
-        }
-    }
-
-    private int hashFunction(String key) {
-        return Math.abs(key.hashCode() % size);
-    }
-
-    public void add(String key, int value) {
-        int index = hashFunction(key);
-        LinkedList<Entry> list = table[index];
-        for (Entry entry : list) {
-            if (entry.key.equals(key)) {
-                entry.value = value;
-                return;
-            }
-        }
-        list.add(new Entry(key, value));
-    }
-
-    public void remove(String key) {
-        int index = hashFunction(key);
-        LinkedList<Entry> list = table[index];
-        for (Entry entry : list) {
-            if (entry.key.equals(key)) {
-                list.remove(entry);
-                return;
-            }
-        }
-    }
-
-    public void display() {
-        for (int i = 0; i < size; i++) {
-            System.out.print(i + ": ");
-            for (Entry entry : table[i]) {
-                System.out.print(entry + " ");
-            }
-            System.out.println();
-        }
-    }
-
-    public int calculateSum() {
-        int sum = 0;
-        for (LinkedList<Entry> list : table) {
-            for (Entry entry : list) {
-                sum += entry.value;
-            }
-        }
-        return sum;
-    }
-
-    public int findMax() {
-        int max = Integer.MIN_VALUE;
-        for (LinkedList<Entry> list : table) {
-            for (Entry entry : list) {
-                if (entry.value > max) {
-                    max = entry.value;
-                }
-            }
-        }
-        return max;
-    }
-
-    public int findMin() {
-        int min = Integer.MAX_VALUE;
-        for (LinkedList<Entry> list : table) {
-            for (Entry entry : list) {
-                if (entry.value < min) {
-                    min = entry.value;
-                }
-            }
-        }
-        return min;
-    }
-
-    public void displayEven() {
-        System.out.println("Четные элементы:");
-        for (LinkedList<Entry> list : table) {
-            for (Entry entry : list) {
-                if (entry.value % 2 == 0) {
-                    System.out.println(entry);
-                }
-            }
-        }
-    }
-
-    public void displayOdd() {
-        System.out.println("Нечетные элементы:");
-        for (LinkedList<Entry> list : table) {
-            for (Entry entry : list) {
-                if (entry.value % 2 != 0) {
-                    System.out.println(entry);
-                }
-            }
-        }
-    }
-
-    private static class Entry {
-        String key;
-        int value;
-
-        Entry(String key, int value) {
+        public HashNode(K key, V value) {
             this.key = key;
             this.value = value;
         }
 
         @Override
         public String toString() {
-            return "(" + key + ", " + value + ")";
+            return "{" + key + " " + value + "}";
         }
     }
-}
 
+    private HashNode[] chainArray;
+    private final int M = 11; // default number of chains
+    private int size;
+
+    public MyHashTable() {
+        this.chainArray = new HashNode[M];
+        this.size = 0;
+    }
+
+    private int hash(K key) {
+        int hashCode = key.hashCode();
+        return (hashCode ^ (hashCode >>> 16)) % M;
+    }
+
+    public void put(K key, V value) {
+        int index = hash(key);
+        HashNode node = chainArray[index];
+
+        while (node != null) {
+            if (node.key.equals(key)) {
+                node.value = value;
+                return;
+            }
+            node = node.next;
+        }
+
+        HashNode newNode = new HashNode(key, value);
+        newNode.next = chainArray[index];
+        chainArray[index] = newNode;
+        size++;
+    }
+
+    public V get(K key) {
+        for (HashNode node = chainArray[hash(key)]; node != null; node = node.next) {
+            if (node.key.equals(key))
+                return node.value;
+        }
+        return null;
+    }
+
+    public V remove(K key) {
+        int index = hash(key);
+        HashNode node = chainArray[index];
+        HashNode prev = null;
+
+        while (node != null && !node.key.equals(key)) {
+            prev = node;
+            node = node.next;
+        }
+
+        if (node != null) {
+            if (prev != null) {
+                prev.next = node.next;
+            } else {
+                chainArray[index] = node.next;
+            }
+            size--;
+            return node.value;
+        }
+        return null;
+    }
+
+    public boolean contains(V value) {
+        for (HashNode node : chainArray) {
+            while (node != null) {
+                if (node.value.equals(value))
+                    return true;
+                node = node.next;
+            }
+        }
+        return false;
+    }
+
+    public K getKey(V value) {
+        for (HashNode node : chainArray) {
+            while (node != null) {
+                if (node.value.equals(value))
+                    return node.key;
+                node = node.next;
+            }
+        }
+        return null;
+    }
+}
