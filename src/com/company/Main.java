@@ -1,23 +1,30 @@
+package com.company;
+
 public class Main {
     public static void main(String[] args) {
-        MyHashTable<Integer, String> hashTable = new MyHashTable<>();
+        MyHashTable<MyTestingClass, String> hashTable = new MyHashTable<>();
+        BST<Integer, String> tree = new BST<>();
 
-        // Добавляем элементы
-        hashTable.put(1, "One");
-        hashTable.put(2, "Two");
-        hashTable.put(3, "Three");
+        for(int i = 0; i < 10000; i++)
+            hashTable.put(new MyTestingClass("" + i), "One");
 
-        // Получаем значение по ключу
-        System.out.println("Value for key 2: " + hashTable.get(2));
+        for(int i = 0; i < 10000; i++)
+            System.out.println("Value for key " + i + ": " + hashTable.get(new MyTestingClass("1")));
 
-        // Удаляем элемент
-        System.out.println("Removed value: " + hashTable.remove(2));
+        System.out.println("Removed value: " + hashTable.remove(new MyTestingClass("0")));
 
-        // Проверяем наличие значения
-        System.out.println("Contains 'Three': " + hashTable.contains("Three"));
+        System.out.println("Contains 'Three': " + hashTable.contains("One"));
 
-        // Получаем ключ по значению
         System.out.println("Key for value 'One': " + hashTable.getKey("One"));
+
+
+        tree.put(1, "ONE");
+        tree.put(2, "ONE");
+        for (var elem : tree.iterator()) {
+
+            System.out.println("key is " + elem);
+
+        }
     }
 }
 

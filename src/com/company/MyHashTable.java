@@ -1,3 +1,7 @@
+package com.company;
+
+import static java.lang.Math.abs;
+
 public class MyHashTable<K, V> {
     private class HashNode {
         private K key;
@@ -16,17 +20,17 @@ public class MyHashTable<K, V> {
     }
 
     private HashNode[] chainArray;
-    private final int M = 11; // default number of chains
+    private final int M = 10000; // default number of chains
     private int size;
 
     public MyHashTable() {
-        this.chainArray = new HashNode[M];
+        this.chainArray = new MyHashTable.HashNode[M];
         this.size = 0;
     }
 
     private int hash(K key) {
         int hashCode = key.hashCode();
-        return (hashCode ^ (hashCode >>> 16)) % M;
+        return abs(hashCode) % M;
     }
 
     public void put(K key, V value) {
