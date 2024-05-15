@@ -6,6 +6,7 @@ import java.util.List;
 
 public class BST<K extends Comparable<K>, V> {
     private Node root;
+    private int size;
 
     private class Node {
         private K key;
@@ -18,8 +19,14 @@ public class BST<K extends Comparable<K>, V> {
         }
     }
 
+    // Constructor
+    public BST() {
+        size = 0;
+    }
+
     public void put(K key, V val) {
         root = put(root, key, val);
+        size++;
     }
 
     private Node put(Node x, K key, V val) {
@@ -44,6 +51,7 @@ public class BST<K extends Comparable<K>, V> {
 
     public void delete(K key) {
         root = delete(root, key);
+        size--;
     }
 
     private Node delete(Node x, K key) {
@@ -71,6 +79,10 @@ public class BST<K extends Comparable<K>, V> {
         if (x.left == null) return x.right;
         x.left = deleteMin(x.left);
         return x;
+    }
+
+    public int size() {
+        return size;
     }
 
     public Iterable<K> iterator() {
