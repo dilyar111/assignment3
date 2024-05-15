@@ -12,9 +12,6 @@ public class MyTestingClass{
         return data.hashCode();
     }
 
-    @Override
-    public String toString(){
-        return data;
-    }
+
 
 }
